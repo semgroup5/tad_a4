@@ -38,7 +38,9 @@ import java.awt.event.*;
 import java.net.*;
 import java.applet.Applet;
 import java.applet.AudioClip;
-import asteroids.sprite.Sprite;
+
+import asteroids.sprite.*;
+
 /******************************************************************************
   Main applet code.
 ******************************************************************************/
@@ -143,7 +145,7 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
 
   public Sprite   ship;
   public Sprite   fwdThruster, revThruster;
-  public Sprite   ufo;
+  public Ufo ufo;
   public Sprite   missle;
   public Sprite[] photons    = new Sprite[MAX_SHOTS];
   public Sprite[] asteroids  = new Sprite[MAX_ROCKS];
@@ -248,30 +250,10 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     for (i = 0; i < numStars; i++)
       stars[i] = new Point((int) (Math.random() * Sprite.width), (int) (Math.random() * Sprite.height));
 
-    // Create shape for the ship sprite.
-
-    ship = new Sprite();
-    ship.shape.addPoint(0, -10);
-    ship.shape.addPoint(7, 10);
-    ship.shape.addPoint(-7, 10);
-
-    // Create shapes for the ship thrusters.
-
-    fwdThruster = new Sprite();
-    fwdThruster.shape.addPoint(0, 12);
-    fwdThruster.shape.addPoint(-3, 16);
-    fwdThruster.shape.addPoint(0, 26);
-    fwdThruster.shape.addPoint(3, 16);
+    ship = new Ship();
+    fwdThruster = new ForwardThruster();
     fwdThruster.active = true;
-    revThruster = new Sprite();
-    revThruster.shape.addPoint(-2, 12);
-    revThruster.shape.addPoint(-4, 14);
-    revThruster.shape.addPoint(-2, 20);
-    revThruster.shape.addPoint(0, 14);
-    revThruster.shape.addPoint(2, 12);
-    revThruster.shape.addPoint(4, 14);
-    revThruster.shape.addPoint(2, 20);
-    revThruster.shape.addPoint(0, 14);
+    revThruster = new ReverseThruster();
     revThruster.active = true;
     // Create shape for each photon sprites.
 
@@ -285,28 +267,12 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
 
     // Create shape for the flying saucer.
 
-    ufo = new Sprite();
-    ufo.shape.addPoint(-15, 0);
-    ufo.shape.addPoint(-10, -5);
-    ufo.shape.addPoint(-5, -5);
-    ufo.shape.addPoint(-5, -8);
-    ufo.shape.addPoint(5, -8);
-    ufo.shape.addPoint(5, -5);
-    ufo.shape.addPoint(10, -5);
-    ufo.shape.addPoint(15, 0);
-    ufo.shape.addPoint(10, 5);
-    ufo.shape.addPoint(-10, 5);
+    ufo = new Ufo();
+
 
     // Create shape for the guided missle.
 
     missle = new Sprite();
-    missle.shape.addPoint(0, -4);
-    missle.shape.addPoint(1, -3);
-    missle.shape.addPoint(1, 3);
-    missle.shape.addPoint(2, 4);
-    missle.shape.addPoint(-2, 4);
-    missle.shape.addPoint(-1, 3);
-    missle.shape.addPoint(-1, -3);
 
     // Create asteroid sprites.
 
@@ -426,7 +392,8 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
         if (playing && score > newUfoScore && !ufo.active) {
           newUfoScore += NEW_UFO_POINTS;
           ufoPassesLeft = UFO_PASSES;
-          initUfo();
+
+          //initUfo();
         }
 
         // If all asteroids have been destroyed create a new batch.
@@ -660,7 +627,7 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
       ufo.deltaX = -ufo.deltaX;
     }
     if (ufo.y > 0)
-      ufo.deltaY = ufo.deltaY;
+      ufo.deltaY = -ufo.deltaY;
     ufo.render();
     saucerPlaying = true;
     if (sound)
