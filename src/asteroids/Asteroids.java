@@ -1,5 +1,5 @@
-/******************************************************************************
-  Asteroids, Version 1.3
+package asteroids; /******************************************************************************
+  asteroids, Version 1.3
 
   Copyright 1998-2001 by Mike Hall.
   Please see http://www.brainjar.com for terms of use.
@@ -21,7 +21,7 @@
 
   Usage:
 
-  <applet code="Asteroids.class" width=w height=h></applet>
+  <applet code="asteroids.class" width=w height=h></applet>
 
   Keyboard Controls:
 
@@ -36,116 +36,9 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
-import java.util.*;
 import java.applet.Applet;
 import java.applet.AudioClip;
-
-/******************************************************************************
-  The AsteroidsSprite class defines a game object, including it's shape,
-  position, movement and rotation. It also can detemine if two objects collide.
-******************************************************************************/
-
-class AsteroidsSprite {
-
-  // Fields:
-
-  static int width;          // Dimensions of the graphics area.
-  static int height;
-
-  Polygon shape;             // Base sprite shape, centered at the origin (0,0).
-  boolean active;            // Active flag.
-  double  angle;             // Current angle of rotation.
-  double  deltaAngle;        // Amount to change the rotation angle.
-  double  x, y;              // Current position on screen.
-  double  deltaX, deltaY;    // Amount to change the screen position.
-  Polygon sprite;            // Final location and shape of sprite after
-                             // applying rotation and translation to get screen
-                             // position. Used for drawing on the screen and in
-                             // detecting collisions.
-
-  // Constructors:
-
-  public AsteroidsSprite() {
-
-    this.shape = new Polygon();
-    this.active = false;
-    this.angle = 0.0;
-    this.deltaAngle = 0.0;
-    this.x = 0.0;
-    this.y = 0.0;
-    this.deltaX = 0.0;
-    this.deltaY = 0.0;
-    this.sprite = new Polygon();
-  }
-
-  // Methods:
-
-  public boolean advance() {
-
-    boolean wrapped;
-
-    // Update the rotation and position of the sprite based on the delta
-    // values. If the sprite moves off the edge of the screen, it is wrapped
-    // around to the other side and TRUE is returnd.
-
-    this.angle += this.deltaAngle;
-    if (this.angle < 0)
-      this.angle += 2 * Math.PI;
-    if (this.angle > 2 * Math.PI)
-      this.angle -= 2 * Math.PI;
-    wrapped = false;
-    this.x += this.deltaX;
-    if (this.x < -width / 2) {
-      this.x += width;
-      wrapped = true;
-    }
-    if (this.x > width / 2) {
-      this.x -= width;
-      wrapped = true;
-    }
-    this.y -= this.deltaY;
-    if (this.y < -height / 2) {
-      this.y += height;
-      wrapped = true;
-    }
-    if (this.y > height / 2) {
-      this.y -= height;
-      wrapped = true;
-    }
-
-    return wrapped;
-  }
-
-  public void render() {
-
-    int i;
-
-    // Render the sprite's shape and location by rotating it's base shape and
-    // moving it to it's proper screen position.
-
-    this.sprite = new Polygon();
-    for (i = 0; i < this.shape.npoints; i++)
-      this.sprite.addPoint((int) Math.round(this.shape.xpoints[i] * Math.cos(this.angle) + this.shape.ypoints[i] * Math.sin(this.angle)) + (int) Math.round(this.x) + width / 2,
-                           (int) Math.round(this.shape.ypoints[i] * Math.cos(this.angle) - this.shape.xpoints[i] * Math.sin(this.angle)) + (int) Math.round(this.y) + height / 2);
-  }
-
-  public boolean isColliding(AsteroidsSprite s) {
-
-    int i;
-
-    // Determine if one sprite overlaps with another, i.e., if any vertice
-    // of one sprite lands inside the other.
-
-    for (i = 0; i < s.sprite.npoints; i++)
-      if (this.sprite.contains(s.sprite.xpoints[i], s.sprite.ypoints[i]))
-        return true;
-    for (i = 0; i < this.sprite.npoints; i++)
-      if (s.sprite.contains(this.sprite.xpoints[i], this.sprite.ypoints[i]))
-        return true;
-    return false;
-  }
-}
-
+import asteroids.sprite.Sprite;
 /******************************************************************************
   Main applet code.
 ******************************************************************************/
@@ -154,7 +47,7 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
 
   // Copyright information.
 
-  String copyName = "Asteroids";
+  String copyName = "asteroids";
   String copyVers = "Version 1.3";
   String copyInfo = "Copyright 1998-2001 by Mike Hall";
   String copyLink = "http://www.brainjar.com";
@@ -246,15 +139,15 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
   boolean up    = false;
   boolean down  = false;
 
-  // Sprite objects.
+  // asteroids.asteroids.Sprite objects.
 
-  AsteroidsSprite   ship;
-  AsteroidsSprite   fwdThruster, revThruster;
-  AsteroidsSprite   ufo;
-  AsteroidsSprite   missle;
-  AsteroidsSprite[] photons    = new AsteroidsSprite[MAX_SHOTS];
-  AsteroidsSprite[] asteroids  = new AsteroidsSprite[MAX_ROCKS];
-  AsteroidsSprite[] explosions = new AsteroidsSprite[MAX_SCRAP];
+  public Sprite   ship;
+  public Sprite   fwdThruster, revThruster;
+  public Sprite   ufo;
+  public Sprite   missle;
+  public Sprite[] photons    = new Sprite[MAX_SHOTS];
+  public Sprite[] asteroids  = new Sprite[MAX_ROCKS];
+  public Sprite[] explosions = new Sprite[MAX_SCRAP];
 
   // Ship data.
 
@@ -345,31 +238,32 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
 
     // Save the screen size.
 
-    AsteroidsSprite.width = d.width;
-    AsteroidsSprite.height = d.height;
+    Sprite.width = d.width;
+    Sprite.height = d.height;
 
     // Generate the starry background.
 
-    numStars = AsteroidsSprite.width * AsteroidsSprite.height / 5000;
+    numStars = Sprite.width * Sprite.height / 5000;
     stars = new Point[numStars];
     for (i = 0; i < numStars; i++)
-      stars[i] = new Point((int) (Math.random() * AsteroidsSprite.width), (int) (Math.random() * AsteroidsSprite.height));
+      stars[i] = new Point((int) (Math.random() * Sprite.width), (int) (Math.random() * Sprite.height));
 
     // Create shape for the ship sprite.
 
-    ship = new AsteroidsSprite();
+    ship = new Sprite();
     ship.shape.addPoint(0, -10);
     ship.shape.addPoint(7, 10);
     ship.shape.addPoint(-7, 10);
 
     // Create shapes for the ship thrusters.
 
-    fwdThruster = new AsteroidsSprite();
+    fwdThruster = new Sprite();
     fwdThruster.shape.addPoint(0, 12);
     fwdThruster.shape.addPoint(-3, 16);
     fwdThruster.shape.addPoint(0, 26);
     fwdThruster.shape.addPoint(3, 16);
-    revThruster = new AsteroidsSprite();
+    fwdThruster.active = true;
+    revThruster = new Sprite();
     revThruster.shape.addPoint(-2, 12);
     revThruster.shape.addPoint(-4, 14);
     revThruster.shape.addPoint(-2, 20);
@@ -378,11 +272,11 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     revThruster.shape.addPoint(4, 14);
     revThruster.shape.addPoint(2, 20);
     revThruster.shape.addPoint(0, 14);
-
+    revThruster.active = true;
     // Create shape for each photon sprites.
 
     for (i = 0; i < MAX_SHOTS; i++) {
-      photons[i] = new AsteroidsSprite();
+      photons[i] = new Sprite();
       photons[i].shape.addPoint(1, 1);
       photons[i].shape.addPoint(1, -1);
       photons[i].shape.addPoint(-1, 1);
@@ -391,7 +285,7 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
 
     // Create shape for the flying saucer.
 
-    ufo = new AsteroidsSprite();
+    ufo = new Sprite();
     ufo.shape.addPoint(-15, 0);
     ufo.shape.addPoint(-10, -5);
     ufo.shape.addPoint(-5, -5);
@@ -405,7 +299,7 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
 
     // Create shape for the guided missle.
 
-    missle = new AsteroidsSprite();
+    missle = new Sprite();
     missle.shape.addPoint(0, -4);
     missle.shape.addPoint(1, -3);
     missle.shape.addPoint(1, 3);
@@ -417,12 +311,12 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     // Create asteroid sprites.
 
     for (i = 0; i < MAX_ROCKS; i++)
-      asteroids[i] = new AsteroidsSprite();
+      asteroids[i] = new Sprite();
 
     // Create explosion sprites.
 
     for (i = 0; i < MAX_SCRAP; i++)
-      explosions[i] = new AsteroidsSprite();
+      explosions[i] = new Sprite();
 
     // Initialize game data and put us in 'game over' mode.
 
@@ -755,14 +649,14 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     // Randomly set flying saucer at left or right edge of the screen.
 
     ufo.active = true;
-    ufo.x = -AsteroidsSprite.width / 2;
-    ufo.y = Math.random() * 2 * AsteroidsSprite.height - AsteroidsSprite.height;
+    ufo.x = -Sprite.width / 2;
+    ufo.y = Math.random() * 2 * Sprite.height - Sprite.height;
     angle = Math.random() * Math.PI / 4 - Math.PI / 2;
     speed = MAX_ROCK_SPEED / 2 + Math.random() * (MAX_ROCK_SPEED / 2);
     ufo.deltaX = speed * -Math.sin(angle);
     ufo.deltaY = speed *  Math.cos(angle);
     if (Math.random() < 0.5) {
-      ufo.x = AsteroidsSprite.width / 2;
+      ufo.x = Sprite.width / 2;
       ufo.deltaX = -ufo.deltaX;
     }
     if (ufo.y > 0)
@@ -771,7 +665,7 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     saucerPlaying = true;
     if (sound)
       saucerSound.loop();
-    ufoCounter = (int) Math.abs(AsteroidsSprite.width / ufo.deltaX);
+    ufoCounter = (int) Math.abs(Sprite.width / ufo.deltaX);
   }
 
   public void updateUfo() {
@@ -950,16 +844,16 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
       // Place the asteroid at one edge of the screen.
 
       if (Math.random() < 0.5) {
-        asteroids[i].x = -AsteroidsSprite.width / 2;
+        asteroids[i].x = -Sprite.width / 2;
         if (Math.random() < 0.5)
-          asteroids[i].x = AsteroidsSprite.width / 2;
-        asteroids[i].y = Math.random() * AsteroidsSprite.height;
+          asteroids[i].x = Sprite.width / 2;
+        asteroids[i].y = Math.random() * Sprite.height;
       }
       else {
-        asteroids[i].x = Math.random() * AsteroidsSprite.width;
-        asteroids[i].y = -AsteroidsSprite.height / 2;
+        asteroids[i].x = Math.random() * Sprite.width;
+        asteroids[i].y = -Sprite.height / 2;
         if (Math.random() < 0.5)
-          asteroids[i].y = AsteroidsSprite.height / 2;
+          asteroids[i].y = Sprite.height / 2;
       }
 
       // Set a random motion for the asteroid.
@@ -1082,7 +976,7 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     explosionIndex = 0;
   }
 
-  public void explode(AsteroidsSprite s) {
+  public void explode(Sprite s) {
 
     int c, i, j;
     int cx, cy;
@@ -1183,8 +1077,8 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     // starting counter.
 
     if (c == 'h' && ship.active && hyperCounter <= 0) {
-      ship.x = Math.random() * AsteroidsSprite.width;
-      ship.y = Math.random() * AsteroidsSprite.height;
+      ship.x = Math.random() * Sprite.width;
+      ship.y = Math.random() * Sprite.height;
       hyperCounter = HYPER_COUNT;
       if (sound & !paused)
         warpSound.play();
@@ -1329,56 +1223,30 @@ public class Asteroids extends Applet implements Runnable, KeyListener {
     // Draw the asteroids.
 
     for (i = 0; i < MAX_ROCKS; i++)
-      if (asteroids[i].active) {
-        if (detail) {
-          offGraphics.setColor(Color.black);
-          offGraphics.fillPolygon(asteroids[i].sprite);
-        }
-        offGraphics.setColor(Color.white);
-        offGraphics.drawPolygon(asteroids[i].sprite);
-        offGraphics.drawLine(asteroids[i].sprite.xpoints[asteroids[i].sprite.npoints - 1], asteroids[i].sprite.ypoints[asteroids[i].sprite.npoints - 1],
-                             asteroids[i].sprite.xpoints[0], asteroids[i].sprite.ypoints[0]);
-      }
+      asteroids[i].draw(offGraphics, Color.white, detail);
 
     // Draw the flying saucer.
 
     if (ufo.active) {
-      if (detail) {
-        offGraphics.setColor(Color.black);
-        offGraphics.fillPolygon(ufo.sprite);
-      }
-      offGraphics.setColor(Color.white);
-      offGraphics.drawPolygon(ufo.sprite);
-      offGraphics.drawLine(ufo.sprite.xpoints[ufo.sprite.npoints - 1], ufo.sprite.ypoints[ufo.sprite.npoints - 1],
-                           ufo.sprite.xpoints[0], ufo.sprite.ypoints[0]);
+      ufo.draw(offGraphics, Color.white, detail);
     }
 
     // Draw the ship, counter is used to fade color to white on hyperspace.
 
     c = 255 - (255 / HYPER_COUNT) * hyperCounter;
     if (ship.active) {
-      if (detail && hyperCounter == 0) {
-        offGraphics.setColor(Color.black);
-        offGraphics.fillPolygon(ship.sprite);
-      }
-      offGraphics.setColor(new Color(c, c, c));
-      offGraphics.drawPolygon(ship.sprite);
-      offGraphics.drawLine(ship.sprite.xpoints[ship.sprite.npoints - 1], ship.sprite.ypoints[ship.sprite.npoints - 1],
-                           ship.sprite.xpoints[0], ship.sprite.ypoints[0]);
+      ship.draw(offGraphics, new Color(c, c, c), detail && hyperCounter==0);
 
       // Draw thruster exhaust if thrusters are on. Do it randomly to get a
       // flicker effect.
 
       if (!paused && detail && Math.random() < 0.5) {
         if (up) {
-          offGraphics.drawPolygon(fwdThruster.sprite);
-          offGraphics.drawLine(fwdThruster.sprite.xpoints[fwdThruster.sprite.npoints - 1], fwdThruster.sprite.ypoints[fwdThruster.sprite.npoints - 1],
-                               fwdThruster.sprite.xpoints[0], fwdThruster.sprite.ypoints[0]);
+          fwdThruster.active = true;
+          fwdThruster.draw(offGraphics, Color.white, false);
         }
         if (down) {
-          offGraphics.drawPolygon(revThruster.sprite);
-          offGraphics.drawLine(revThruster.sprite.xpoints[revThruster.sprite.npoints - 1], revThruster.sprite.ypoints[revThruster.sprite.npoints - 1],
-                               revThruster.sprite.xpoints[0], revThruster.sprite.ypoints[0]);
+          revThruster.draw(offGraphics, Color.white, false);
         }
       }
     }

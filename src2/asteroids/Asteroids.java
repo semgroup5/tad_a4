@@ -1,7 +1,7 @@
 package asteroids;
 
 /******************************************************************************
-  Asteroids, Version 1.3
+  asteroids, Version 1.3
 
   Copyright 1998-2001 by Mike Hall.
   Please see http://www.brainjar.com for terms of use.
@@ -23,7 +23,7 @@ package asteroids;
 
   Usage:
 
-  <applet code="Asteroids.class" width=w height=h></applet>
+  <applet code="asteroids.class" width=w height=h></applet>
 
   Keyboard Controls:
 
@@ -54,7 +54,7 @@ public class Asteroids extends Applet implements Runnable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-String copyName = "Asteroids";
+String copyName = "asteroids";
   String copyVers = "Version 1.3";
   String copyInfo = "Copyright 1998-2001 by Mike Hall";
   static String copyLink = "http://www.brainjar.com";
@@ -146,7 +146,7 @@ String copyName = "Asteroids";
   static boolean up    = false;
   static boolean down  = false;
 
-  // Sprite objects.
+  // asteroids.asteroids.Sprite objects.
 
   static Ship   ship;
   static Thruster   fwdThruster, revThruster;

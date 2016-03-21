@@ -1,7 +1,7 @@
 package asteroids;
 
 /******************************************************************************
-Asteroids, Version 1.3
+asteroids, Version 1.3
 
 Copyright 1998-2001 by Mike Hall.
 Please see http://www.brainjar.com for terms of use.
@@ -23,7 +23,7 @@ Revision History:
 
 Usage:
 
-<applet code="Asteroids.class" width=w height=h></applet>
+<applet code="asteroids.class" width=w height=h></applet>
 
 Keyboard Controls:
 
