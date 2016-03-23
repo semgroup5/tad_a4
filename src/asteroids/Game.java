@@ -1,7 +1,7 @@
 package asteroids;
 
 /******************************************************************************
-  asteroids, Version 1.3
+  Asteroids, Version 1.3
 
   Copyright 1998-2001 by Mike Hall.
   Please see http://www.brainjar.com for terms of use.
@@ -23,7 +23,7 @@ package asteroids;
 
   Usage:
 
-  <applet code="asteroids.class" width=w height=h></applet>
+  <applet code="Asteroids.class" width=w height=h></applet>
 
   Keyboard Controls:
 
@@ -45,7 +45,7 @@ import java.applet.AudioClip;
   Main applet code.
 ******************************************************************************/
 
-public class Asteroids extends Applet implements Runnable {
+public class Game extends Applet implements Runnable {
 
   // Copyright information.
 
@@ -54,7 +54,7 @@ public class Asteroids extends Applet implements Runnable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-String copyName = "asteroids";
+String copyName = "Asteroids";
   String copyVers = "Version 1.3";
   String copyInfo = "Copyright 1998-2001 by Mike Hall";
   static String copyLink = "http://www.brainjar.com";
@@ -146,14 +146,14 @@ String copyName = "asteroids";
   static boolean up    = false;
   static boolean down  = false;
 
-  // asteroids.asteroids.Sprite objects.
+  // Sprite objects.
 
   static Ship   ship;
   static Thruster   fwdThruster, revThruster;
   static Ufo   ufo;
   static Missile   missle;
   static Photons[] photons    = new Photons[MAX_SHOTS];
-  static flyingAsteroids[] asteroids  = new flyingAsteroids[MAX_ROCKS];
+  static Asteroids[] asteroids  = new Asteroids[MAX_ROCKS];
   static Explosions[] explosions = new Explosions[MAX_SCRAP];
 
   // Ship data.
@@ -246,15 +246,15 @@ String copyName = "asteroids";
 
     // Save the screen size.
 
-    AsteroidsSprite.width = d.width;
-    AsteroidsSprite.height = d.height;
+    Sprite.width = d.width;
+    Sprite.height = d.height;
 
     // Generate the starry background.
 
-    numStars = AsteroidsSprite.width * AsteroidsSprite.height / 5000;
+    numStars = Sprite.width * Sprite.height / 5000;
     stars = new Point[numStars];
     for (i = 0; i < numStars; i++)
-      stars[i] = new Point((int) (Math.random() * AsteroidsSprite.width), (int) (Math.random() * AsteroidsSprite.height));
+      stars[i] = new Point((int) (Math.random() * Sprite.width), (int) (Math.random() * Sprite.height));
 
     // Create shape for the ship sprite.
 
@@ -318,7 +318,7 @@ String copyName = "asteroids";
     // Create asteroid sprites.
 
     for (i = 0; i < MAX_ROCKS; i++)
-      asteroids[i] = new flyingAsteroids();
+      asteroids[i] = new Asteroids();
 
     // Create explosion sprites.
 
@@ -347,7 +347,7 @@ String copyName = "asteroids";
     new Photons().initPhotons();
     ufo.stopUfo();
     missle.stopMissle();
-    new flyingAsteroids().initAsteroids();
+    new Asteroids().initAsteroids();
     new Explosions().initExplosions();
     playing = true;
     paused = false;
@@ -419,7 +419,7 @@ String copyName = "asteroids";
         new Photons().updatePhotons();
         ufo.updateUfo();
         missle.updateMissle();
-        new flyingAsteroids().updateAsteroids();
+        new Asteroids().updateAsteroids();
         new Explosions().updateExplosions();
 
         // Check the score and advance high score, add a new ship or start the
@@ -441,7 +441,7 @@ String copyName = "asteroids";
 
         if (asteroidsLeft <= 0)
             if (--asteroidsCounter <= 0)
-              new flyingAsteroids().initAsteroids();
+              new Asteroids().initAsteroids();
       }
 
       // Update the screen and set the timer for the next loop.
@@ -509,7 +509,7 @@ String copyName = "asteroids";
 
 
 
-  public static void explode(AsteroidsSprite s) {
+  public static void explode(Sprite s) {
 
     int c, i, j;
     int cx, cy;

@@ -1,7 +1,7 @@
 package asteroids;
 
 /******************************************************************************
-asteroids, Version 1.3
+Asteroids, Version 1.3
 
 Copyright 1998-2001 by Mike Hall.
 Please see http://www.brainjar.com for terms of use.
@@ -23,7 +23,7 @@ Revision History:
 
 Usage:
 
-<applet code="asteroids.class" width=w height=h></applet>
+<applet code="Asteroids.class" width=w height=h></applet>
 
 Keyboard Controls:
 
@@ -37,7 +37,7 @@ M            - Toggle Sound  D           - Toggle Graphics Detail
 
 import java.awt.Polygon;
 
-class AsteroidsSprite {
+class Sprite {
 	
 
 		  // Fields:
@@ -58,7 +58,7 @@ class AsteroidsSprite {
 
 		  // Constructors:
 
-		  public AsteroidsSprite() {
+		  public Sprite() {
 
 		    this.shape = new Polygon();
 		    this.active = false;
@@ -122,7 +122,7 @@ class AsteroidsSprite {
 		                           (int) Math.round(this.shape.ypoints[i] * Math.cos(this.angle) - this.shape.xpoints[i] * Math.sin(this.angle)) + (int) Math.round(this.y) + height / 2);
 		  }
 
-		  public boolean isColliding(AsteroidsSprite s) {
+		  public boolean isColliding(Sprite s) {
 
 		    int i;
 

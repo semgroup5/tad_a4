@@ -1,6 +1,6 @@
 package asteroids;
 
-public class Thruster extends AsteroidsSprite {
+public class Thruster extends Sprite {
 	
 	public Thruster() {
 		super();
